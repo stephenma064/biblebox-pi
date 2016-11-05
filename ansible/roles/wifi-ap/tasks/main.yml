@@ -1,0 +1,21 @@
+---
+- name: Install hostapd
+  apt:
+    name: hostapd
+    state: present
+
+- name: Copy hostapd config
+  template:
+    src: hostapd.conf.j2
+    dest: /etc/hostapd/hostapd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: Reload hostapd
+
+# XXX - is this needed given we're running hostapd in ifupdown mode?
+- name: Start and enable hostapd
+  service:
+    name: hostapd
+    enabled: yes
+    state: started

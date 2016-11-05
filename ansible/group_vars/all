@@ -1,0 +1,38 @@
+---
+# These parameters apply to all hosts. While this would normally be
+#  put in as host_vars, the IP address of the Pi will be different
+#  for each deployment, so it's easier to put it here. We could also
+#  have the pi in a specific group in the inventory file, and make
+#  this file correspond to that group, but then the inventory is
+#  slightly more complex
+
+# Make sure we show index.html for 404, given we'll be sent here by
+#  people browsing for all sorts of things
+nginx_vhosts:
+  - listen: "80 default_server"
+    server_name: "{{ hostname }} _"
+    root: "/var/www/html"
+    index: "index.html"
+    error_page: "404 /index.html"
+    access_log: "/var/log/nginx/default-access.log"
+    error_log: "/var/log/nginx/default-error.log"
+    extra_parameters: |
+      autoindex on;
+# We want to set the default server. Remove the default server that
+#  nginx provides.
+nginx_remove_default_vhost: true
+
+firewall_v4_group_rules:
+  150 redirect http:
+    - -t nat -A PREROUTING -s {{ wlan0_network_cidr }} tcp --dport 80 -j DNAT --to {{ wlan0_ip_address }}:80
+  # Overriding default - we only want ssh on the wired interface
+  200 allow ssh:
+    - -A INPUT -p tcp -i eth0 --dport ssh -j ACCEPT
+  300 allow dhcp:
+    - -A INPUT -p udp --dport bootps -j ACCEPT
+  350 allow dns:
+    - -A INPUT -p udp --dport domain -j ACCEPT
+    - -A INPUT -p tcp --dport domain -j ACCEPT
+  400 allow web traffic:
+    - -A INPUT -p tcp --dport http -j ACCEPT
+
