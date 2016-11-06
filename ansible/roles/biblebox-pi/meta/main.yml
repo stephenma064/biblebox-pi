@@ -3,8 +3,8 @@
 #  subsequent lookups
 dependencies:
   - bootstrap
-  - wifi-ap
+    #  - wifi-ap
   - geerlingguy.nginx
-  - mikegleasonjr.firewall
-  - usb-content
-  - dns-dhcp
+    #  - mikegleasonjr.firewall
+    #  - usb-content
+    #  - dns-dhcp

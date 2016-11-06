@@ -1,11 +1,11 @@
 ---
 - name: Update apt cache.
   apt: update_cache=yes cache_valid_time=86400
-- name: Update the repository cache and update package "nginx" to latest version using default release squeeze-backport
+- name: Update the repository cache and update package "nginx" to latest version using default release 
   apt:
     name: nginx
     state: latest
-    default_release: squeeze-backports
+    default_release: "jessie-backports"
     update_cache: yes
 
 - name: Ensure nginx is installed.
